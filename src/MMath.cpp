@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 namespace MMath {
 
 	struct Vec2 {
@@ -13,23 +13,23 @@ namespace MMath {
 		float w;
 	};
 
-	static inline Vec2 get_UR(Rect r) {
+	Vec2 get_UR(Rect r) {
 		return Vec2{r.x + r.w, r.y + r.h};
 	}
 
-	static inline Vec2 get_UL(Rect r) {
+	Vec2 get_UL(Rect r) {
 		return Vec2{ r.x - r.w, r.y + r.h };
 	}
 
-	static inline Vec2 get_BR(Rect r) {
+	Vec2 get_BR(Rect r) {
 		return Vec2{ r.x + r.w, r.y - r.h };
 	}
 
-	static inline Vec2 get_BL(Rect r) {
+	Vec2 get_BL(Rect r) {
 		return Vec2{ r.x - r.w, r.y - r.h };
 	}
 
-	static inline Rect* intersects(Rect r1, Rect r2){
+	Rect* intersects(Rect r1, Rect r2){
 		Vec2 r1_UR = get_UR(r1);
 		Vec2 r1_UL = get_UL(r1);
 		Vec2 r1_BR = get_BR(r1);
@@ -50,3 +50,4 @@ namespace MMath {
 		else { return val; }
 	}
 }
+*/
