@@ -13,7 +13,8 @@ namespace Server {
 		public:
 			static RenderServer* get_render_server();
 
-			ServerManager();
+			ServerManager(SDL_Window* window);
+
 	};
 }
 

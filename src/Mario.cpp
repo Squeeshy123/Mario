@@ -7,7 +7,10 @@
 #include "ECS.h"
 #include "Components.h"
 
-static Server::ServerManager* server_manager = new Server::ServerManager();
+
+#include "Scripts/Player.h"
+
+const std::string base_title = "Mario | ";
 
 int checkpoint = 0;
 void debugcheck(std::string s) {
@@ -66,56 +69,54 @@ int wmain(int argc, char* argv[])
         720,
         SDL_RENDERER_ACCELERATED);
 
+    Server::ServerManager* server_manager = new Server::ServerManager(window);
 
     SDL_Event event;
     bool running = true;
     Manager* manager = new Manager(server_manager);
-    Entity* e = manager->add_entity();
+    Entity* player = manager->add_entity();
     
-    e->add_component<TransformComponent>(100, 100, 2, 2);
-    
+    player->add_component<TransformComponent>(100.0f, 100.0f, 2.0f, 2.0f);
+    player->add_component<SpriteComponent>();
+    player->add_component<PlayerMovementComponent>();
 
-    //printf("(%i, %i)", e->get_component<TransformComponent>()->pos_x, e->get_component<TransformComponent>()->pos_y);
 
-    e->add_component<SpriteComponent>();
-    
     manager->begin();
 
+
+    double deltaTime = 0;
+
+    Uint32 lastUpdate = SDL_GetTicks();
+
     while (running)
-    {
+    {        
         while (SDL_PollEvent(&event) > 0)
         {
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                std::cout << "Quitting application\n";
-                running = false;
-                break;
-
-            case SDL_MOUSEMOTION:
-                std::cout << "Mouse Position = { "
-                    << event.motion.x << " "
-                    << event.motion.y << " }\n";
-                break;
-
-            case SDL_MOUSEBUTTONDOWN:
-            case SDL_MOUSEBUTTONUP:
-                std::cout << convert_button_number_to_string(event.button.button)
-                    << " mouse button " << ((event.button.state == SDL_PRESSED) ? "pressed" : "released");
-                std::cout << "\n";
-                break;
-
-            case SDL_KEYDOWN:
-            case SDL_KEYUP:
-                std::cout << "Key " << (char)event.key.keysym.sym << " "
-                    << ((event.key.state == SDL_PRESSED) ? "pressed" : "released") << "\n";
-                break;
+            manager->input(event);
+            if (event.type == SDL_QUIT) {
+                SDL_Quit();
+                return 0;
             }
         }
-
-        manager->tick(0.1f);
+        
 
         server_manager->get_render_server()->render();
+
+        Uint32 current = SDL_GetTicks();
+
+        // Calculate dT (in seconds)
+
+        float deltaTime = (current - lastUpdate) / 1000.0f;
+
+
+        
+        manager->tick(deltaTime);
+
+        
+        std::string Title = base_title + std::to_string(deltaTime);
+        SDL_SetWindowTitle(window, Title.c_str());
+
+        lastUpdate = current;
 
         SDL_RenderPresent(server_manager->get_render_server()->get_renderer());
     }

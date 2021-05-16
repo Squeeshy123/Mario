@@ -8,7 +8,7 @@
 #include <memory>
 #include "ServerManager.h"
 
-#define COMPONENT_INIT(ID, classname) classname() = default;	static const int id = ID;	static int get_id() { return Component::id;} 
+#define COMPONENT_INIT(ID, classname) public: classname() = default;	static const int id = ID;	static int get_id() { return Component::id;} 
 
 
 class Entity;
@@ -19,7 +19,7 @@ class Manager;
 class Component {	
 
 	public:
-		Entity* owner;
+		Entity* owner = nullptr;
 
 		COMPONENT_INIT(0, Component);
 
@@ -35,7 +35,7 @@ class Component {
 
 class Entity {
 	private:
-		Manager* manager;
+		Manager* manager = nullptr;
 
 		std::vector<std::unique_ptr<Component>> components;
 
@@ -54,7 +54,6 @@ class Entity {
 
 		template< class ComponentType, typename... Args >
 		void add_component(Args&&... params) {
-			printf("1");
 			if (ComponentType::get_id() > -1) {
 				if (sizeof...(Args) > 0) {
 					components.emplace_back(std::make_unique< ComponentType >(std::forward< Args >(params)...));
@@ -65,7 +64,6 @@ class Entity {
 					components[components.size() - 1]->set_owner(this);
 				}
 			}
-			printf("2");
 		}
 
 		template<class ComponentType>
@@ -110,4 +108,6 @@ class Manager {
 		Entity* add_entity() { Entity* e = new Entity(); e->set_manager(this); entities.push_back(e); return e; }
 
 		RenderServer* get_render_server() { return server_manager->get_render_server(); };
+		
+		Server::ServerManager* get_server_manager() { return server_manager; };
 };

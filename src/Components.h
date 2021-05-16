@@ -12,19 +12,21 @@
 
 #define TRANSFROM_COMPONENT_ID 1
 #define SPRITE_COMPONENT_ID 2
+#define SCRIPT_COMPONENT_ID 3
 
+#define PLAYER_MOVEMENT_COMPONENT_ID 4
 
 class TransformComponent : public Component {
 	public:
 		COMPONENT_INIT(TRANSFROM_COMPONENT_ID, TransformComponent)
 
-		int pos_x;
-		int pos_y;
+		float pos_x;
+		float pos_y;
 		
-		int size_x;
-		int size_y;
+		float size_x;
+		float size_y;
 
-		TransformComponent(int p_pos_x, int p_pos_y, int p_size_x, int p_size_y) 
+		TransformComponent(float p_pos_x, float p_pos_y, float p_size_x, float p_size_y) 
 			: Component() {
 			//Component::id = TRANSFROM_COMPONENENT_ID;
 
@@ -35,22 +37,22 @@ class TransformComponent : public Component {
 			size_y = p_size_y;
 		}
 
-		void add_position(int p_x, int p_y) {
+		void add_position(float p_x, float p_y) {
 			pos_x += p_x;
 			pos_y += p_y;
 		}
 
-		void set_position(int p_x, int p_y) {
+		void set_position(float p_x, float p_y) {
 			pos_x = p_x;
 			pos_y = p_y;
 		}
 
-		void add_size(int p_x, int p_y) {
+		void add_size(float p_x, float p_y) {
 			size_x += p_x;
 			size_y += p_y;
 		}
 
-		void set_size(int p_x, int p_y) {
+		void set_size(float p_x, float p_y) {
 			size_x = p_x;
 			size_y = p_y;
 		}
@@ -65,7 +67,9 @@ class SpriteComponent
 
 		std::string path;
 
-		TransformComponent* t_comp;
+		TransformComponent* t_comp = nullptr;
+
+		RenderAsset* render_asset = nullptr;
 		/*
 		SpriteComponent()
 		{
@@ -95,10 +99,28 @@ class SpriteComponent
 
 		void begin() {
 			if (get_owner() != nullptr) {
-				path = "mario.png";
+				path = "C:\\Users\\finnm\\Desktop\\CSCWork\\Projects\\Mario\\src\\mario.png";
+
+				// Safety check for TransformComponent
 				if (t_comp == nullptr) t_comp = get_owner()->get_component<TransformComponent>();
-				printf("Trying to add asset");
-				owner->get_manager()->get_render_server()->create_render_asset(path, t_comp->pos_x, t_comp->pos_y, t_comp->size_x * 64, t_comp->size_y * 64);
+
+				render_asset = owner->get_manager()->get_render_server()->create_render_asset(RenderType::Texture, path, t_comp->pos_x, t_comp->pos_y, t_comp->size_x * 64, t_comp->size_y * 64);
 			}
 		}
+
+		void tick(float deltaTime) {
+			// Update render asset position
+			render_asset->set_rect(t_comp->pos_x, t_comp->pos_y, t_comp->size_x * 64, t_comp->size_y * 64);
+		}
+};
+
+class ScriptComponent : public Component {
+	COMPONENT_INIT(SCRIPT_COMPONENT_ID, ScriptComponent)
+
+	public:
+		//virtual void begin();
+		//virtual void tick(float deltaTime)  {};
+		//virtual void input(SDL_Event event) {};
+
+
 };

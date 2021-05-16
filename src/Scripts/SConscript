@@ -1,9 +1,8 @@
 Import('env')
-Import('path')
 
 import os
 
-currentPath = path
+currentPath = '.'
 
 #VariantDir("..\\build", '.\\', duplicate=0)
 
@@ -22,7 +21,7 @@ for root, dirs, files in srcs:
 	for d in dirs:
 		if os.path.isfile(d + "\\SConscript"):
 			print("Scanning through: " + currentPath + "\\" + d + "\\SConscript")
-			o = env.SConscript(currentPath + "\\" + d + "\\SConscript")
+			o = SConscript(currentPath + "\\" + d + "\\SConscript")
 			objs.extend(o)
 	
 	for f in files:
