@@ -7,8 +7,8 @@ if 'vsproj' in ARGUMENTS:
 
 env = Environment()
 
-env.Append(CPPPATH=['C:\\Users\\finnm\\Desktop\\CSCWork\\Libraries\\SDL\\include', '.\\src\\'])
-env.Append(LIBPATH=['C:\\Users\\finnm\\Desktop\\CSCWork\\Libraries\\SDL\\lib'])
+env.Append(CPPPATH=['A:\Desktop\Programming\Engine\Mogue\Extra\include', '.\\src\\'])
+env.Append(LIBPATH=['A:\Desktop\Programming\Engine\Mogue\Extra\libs'])
 env.Append(LIBS=['SDL2', 'SDL2main', 'SDL2_image'])
 
 env.Append(CXXVERSION='99')
