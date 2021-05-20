@@ -19,9 +19,14 @@ class RenderAsset
 		std::string spr_path;
 
 		Rect r;
-	
+		
+		
+
 	public:
 		RenderType render_type;
+
+		std::vector<Vec2> instances = { Vec2{0, 0} };
+
 
 		RenderAsset(RenderServer* render_server, RenderType p_render_type, std::string path, float p_x, float p_y, float p_width, float p_height) {
 			render_type = p_render_type;
@@ -32,13 +37,13 @@ class RenderAsset
 
 			switch (render_type)
 			{
-			case RenderType::Texture:
-				render_server->load_texture(path);
-				break;
-			case RenderType::Shape:
-				break;
-			default:
-				break;
+				case RenderType::Texture:
+					render_server->load_texture(path);
+					break;
+				case RenderType::Shape:
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -57,5 +62,12 @@ class RenderAsset
 		std::string get_path() {
 			return spr_path;
 		}
+
+		void clear_instances(){
+			instances.clear();
+		}
+
+		//virtual void render();
+
 };
 

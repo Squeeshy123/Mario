@@ -39,3 +39,7 @@
 /*.vcxproj
 /*.vcxproj.*
 */.vscode
+.vscode/*
+.sconsign.dblite
+.sconsign.dblite
+.sconsign.dblite

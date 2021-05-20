@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Components.h"
+#include "../Components.hpp"
 
 #include "../MMath.h"
 

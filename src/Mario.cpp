@@ -5,7 +5,7 @@
 #include "ServerManager.h"
 
 #include "ECS.h"
-#include "Components.h"
+#include "Components.hpp"
 
 
 #include "Scripts/Player.h"
@@ -74,11 +74,12 @@ int wmain(int argc, char* argv[])
     SDL_Event event;
     bool running = true;
     Manager* manager = new Manager(server_manager);
-    Entity* player = manager->add_entity();
     
-    player->add_component<TransformComponent>(100.0f, 100.0f, 2.0f, 2.0f);
-    player->add_component<SpriteComponent>();
-    player->add_component<PlayerMovementComponent>();
+
+    Entity* tilemap = manager->add_entity();
+    TilemapComponent* tilemap_comp = tilemap->add_component<TilemapComponent>();
+
+    tilemap_comp->add_tile(1, 1, 0);
 
 
     manager->begin();

@@ -1,13 +1,15 @@
 #pragma once
 
 #include <string>
+#include <tuple>
+#include <vector>
 
 #include "ECS.h"
 
 #include "RenderAsset.h"
 #include "ServerManager.h"
 
-
+#include "MMath.h"
 
 
 #define TRANSFROM_COMPONENT_ID 1
@@ -15,6 +17,10 @@
 #define SCRIPT_COMPONENT_ID 3
 
 #define PLAYER_MOVEMENT_COMPONENT_ID 4
+
+#define TILEMAP_COMPONENT_ID 5
+
+using namespace MMath;
 
 class TransformComponent : public Component {
 	public:
@@ -99,7 +105,7 @@ class SpriteComponent
 
 		void begin() {
 			if (get_owner() != nullptr) {
-				path = "C:\\Users\\finnm\\Desktop\\CSCWork\\Projects\\Mario\\src\\mario.png";
+				path = "assets\\mario.png";
 
 				// Safety check for TransformComponent
 				if (t_comp == nullptr) t_comp = get_owner()->get_component<TransformComponent>();
@@ -123,4 +129,51 @@ class ScriptComponent : public Component {
 		//virtual void input(SDL_Event event) {};
 
 
+};
+
+
+class TilemapComponent : public Component {
+	COMPONENT_INIT(TILEMAP_COMPONENT_ID, TilemapComponent)
+	
+	private:
+		std::vector<std::string> sprites = {"assets\\bricks.png"};
+
+		TransformComponent* t_comp = nullptr;
+
+		std::vector<RenderAsset*> render_assets;
+
+		Vec2 cell_size = Vec2{64,64};
+
+	public:
+		std::vector<std::tuple<int, int, int>> tiles;
+
+		TilemapComponent(std::vector<std::string> spr_paths ) : Component() {
+			sprites = spr_paths;
+			t_comp = owner->get_component<TransformComponent>();
+
+			for (int i = 0; i < sprites.size() - 1; i++) {
+				render_assets.push_back(owner->get_manager()->get_render_server()->create_render_asset(RenderType::Texture, sprites[i], t_comp->pos_x, t_comp->pos_y, t_comp->size_x * cell_size.x, t_comp->size_y * cell_size.y));
+			}
+		}
+
+		void update_render_tiles() {
+			for(int i = 0; i<tiles.size()-1; i++){
+				render_assets[std::get<2>(tiles[i])]->clear_instances();
+				render_assets[std::get<2>(tiles[i])]->instances.push_back(Vec2{(float)std::get<0>(tiles[i]) * cell_size.x, (float)std::get<1>(tiles[i]) * cell_size.y});
+			}
+		}
+		// Update the sprite of a tile
+		void set_tile_sprite(int tile_index, int new_sprite_index) {
+			tiles[tile_index] = std::make_tuple(std::get<0>(tiles[tile_index]), std::get<1>(tiles[tile_index]), new_sprite_index);
+		}
+		// Add a tile
+		void add_tile(int p_pos_x, int p_pos_y, int sprite_index) {
+			if (sprite_index > sprites.size()-1){
+				printf("Error: Sprite index out of range");
+			}
+			else {
+				tiles.push_back(std::tuple<int, int, int>{p_pos_x, p_pos_y, sprite_index});
+				update_render_tiles();
+			}
+		}
 };

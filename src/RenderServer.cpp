@@ -10,6 +10,7 @@ void RenderServer::begin() {
 }
 
 void RenderServer::update_textures() {
+	texs.clear();
 	for (size_t i = 0; i < render_buffer.size(); i++) {
 		load_texture(render_buffer[i]->get_path());
 	}
@@ -26,6 +27,7 @@ RenderAsset* RenderServer::create_render_asset(RenderType p_render_type, std::st
 SDL_Texture* RenderServer::load_texture(std::string path)
 {
 	SDL_Surface* sdl_s = IMG_Load(path.c_str());
+
 	printf("Creating Texture");
 	if (sdl_s == NULL) {
 		printf("Unable to create texture surface, SDL_Image Error: %s\n", IMG_GetError());
@@ -52,17 +54,18 @@ void RenderServer::render()
 	SDL_RenderClear(renderer);
 
 	//printf("Start render");
-	for (size_t i = 0; i < render_buffer.size(); i++) {
-		if (render_buffer[i]->render_type == RenderType::Texture) {
-			SDL_Rect r;
+	for (size_t x = 0; x < render_buffer.size(); x++) {
+		if (render_buffer[x]->render_type == RenderType::Texture) {
+			for (int y = 0; render_buffer[x]->instances.size()-1; y++) {
+				SDL_Rect r;
+				
+				r.x = (int)render_buffer[x]->get_rect().x + render_buffer[x]->instances[y].x;
+				r.y = (int)render_buffer[x]->get_rect().y + render_buffer[x]->instances[y].y;
+				r.w = (int)render_buffer[x]->get_rect().w;
+				r.h = (int)render_buffer[x]->get_rect().h;
 
-			r.x = (int)render_buffer[i]->get_rect().x;
-			r.y = (int)render_buffer[i]->get_rect().y;
-			r.w = (int)render_buffer[i]->get_rect().w;
-			r.h = (int)render_buffer[i]->get_rect().h;
-
-
-			SDL_RenderCopy(renderer, texs[i], NULL, &r);
+				SDL_RenderCopy(renderer, texs[x], NULL, &r);
+			}
 		}
 	}
 	//printf("Finished render");

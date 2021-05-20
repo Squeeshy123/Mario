@@ -16,6 +16,7 @@ class Component;
 class Manager;
 
 
+
 class Component {	
 
 	public:
@@ -53,17 +54,20 @@ class Entity {
 		}
 
 		template< class ComponentType, typename... Args >
-		void add_component(Args&&... params) {
+		ComponentType* add_component(Args&&... params) {
 			if (ComponentType::get_id() > -1) {
 				if (sizeof...(Args) > 0) {
 					components.emplace_back(std::make_unique< ComponentType >(std::forward< Args >(params)...));
 					components[components.size() - 1]->set_owner(this);
+					return (ComponentType*)(components[components.size() - 1].get());
 				}
 				else {
 					components.emplace_back(std::make_unique< ComponentType >());
 					components[components.size() - 1]->set_owner(this);
+					return (ComponentType*)(components[components.size() - 1].get());
 				}
 			}
+			return nullptr;
 		}
 
 		template<class ComponentType>
@@ -111,3 +115,4 @@ class Manager {
 		
 		Server::ServerManager* get_server_manager() { return server_manager; };
 };
+
