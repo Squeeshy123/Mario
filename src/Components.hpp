@@ -106,11 +106,12 @@ class SpriteComponent
 		void begin() {
 			if (get_owner() != nullptr) {
 				path = "assets\\mario.png";
-
+				printf("1111111\n");
 				// Safety check for TransformComponent
 				if (t_comp == nullptr) t_comp = get_owner()->get_component<TransformComponent>();
-
+				printf("22222\n");
 				render_asset = owner->get_manager()->get_render_server()->create_render_asset(RenderType::Texture, path, t_comp->pos_x, t_comp->pos_y, t_comp->size_x * 64, t_comp->size_y * 64);
+				printf("33333333\n");
 			}
 		}
 
@@ -133,12 +134,13 @@ class ScriptComponent : public Component {
 
 
 class TilemapComponent : public Component {
-	COMPONENT_INIT(TILEMAP_COMPONENT_ID, TilemapComponent)
-	
+	public: 
+		static const int id = 5; 
+		static int get_id() { return Component::id;}
 	private:
-		std::vector<std::string> sprites = {"assets\\bricks.png"};
+		std::vector<std::string> sprites;
 
-		TransformComponent* t_comp = nullptr;
+		TransformComponent* t_comp = owner->get_component<TransformComponent>();;
 
 		std::vector<RenderAsset*> render_assets;
 
@@ -147,17 +149,22 @@ class TilemapComponent : public Component {
 	public:
 		std::vector<std::tuple<int, int, int>> tiles;
 
-		TilemapComponent(std::vector<std::string> spr_paths ) : Component() {
-			sprites = spr_paths;
-			t_comp = owner->get_component<TransformComponent>();
+		TilemapComponent();
 
-			for (int i = 0; i < sprites.size() - 1; i++) {
+		void create_render_assets(){
+			render_assets.clear();
+			for (int i = 0; i < sprites.size(); i++) {
 				render_assets.push_back(owner->get_manager()->get_render_server()->create_render_asset(RenderType::Texture, sprites[i], t_comp->pos_x, t_comp->pos_y, t_comp->size_x * cell_size.x, t_comp->size_y * cell_size.y));
 			}
 		}
 
+		void set_tileset(std::vector<std::string> p_spr_paths){
+			sprites = p_spr_paths;
+			update_render_tiles();
+		}
+
 		void update_render_tiles() {
-			for(int i = 0; i<tiles.size()-1; i++){
+			for(int i = 0; i<tiles.size(); i++){
 				render_assets[std::get<2>(tiles[i])]->clear_instances();
 				render_assets[std::get<2>(tiles[i])]->instances.push_back(Vec2{(float)std::get<0>(tiles[i]) * cell_size.x, (float)std::get<1>(tiles[i]) * cell_size.y});
 			}
@@ -166,6 +173,7 @@ class TilemapComponent : public Component {
 		void set_tile_sprite(int tile_index, int new_sprite_index) {
 			tiles[tile_index] = std::make_tuple(std::get<0>(tiles[tile_index]), std::get<1>(tiles[tile_index]), new_sprite_index);
 		}
+
 		// Add a tile
 		void add_tile(int p_pos_x, int p_pos_y, int sprite_index) {
 			if (sprite_index > sprites.size()-1){

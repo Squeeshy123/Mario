@@ -7,8 +7,8 @@ if 'vsproj' in ARGUMENTS:
 
 env = Environment()
 
-env.Append(CPPPATH=['A:\Desktop\Programming\Engine\Mogue\Extra\include', '.\\src\\'])
-env.Append(LIBPATH=['A:\Desktop\Programming\Engine\Mogue\Extra\libs'])
+env.Append(CPPPATH=['C:\\Users\\finnm\\Desktop\\CSCWork\\Libraries\\SDL\\include', '.\\src\\'])
+env.Append(LIBPATH=['C:\\Users\\finnm\\Desktop\\CSCWork\\Libraries\\SDL\\lib'])
 env.Append(LIBS=['SDL2', 'SDL2main', 'SDL2_image'])
 
 env.Append(CXXVERSION='99')
@@ -19,17 +19,21 @@ cpps  = []
 heads = []
 
 for root, dirs, files in walk:
-    path = root
+    path = root#.replace('\\', '\\\\')
     for f in files:
         if f.endswith(".cpp"):
-            cpps.append(root + "\\" + f)
-        elif f.endswith(".h"):
-            heads.append(root + "\\" + f)
+            cpps.append(path + "\\" + f)
+        elif f.endswith(".h") or f.endswith(".hpp"):
+            heads.append(path + "\\" + f)
             
 prog = env.Program(target='Mario', source=cpps)
 
 
 if vsproj == 1:
+    '''for i in range(len(cpps)-1):
+        cpps[i] = cpps[i][2:]
+    for i in range(len(cpps)-1):
+        cpps[i] = cpps[i][2:]'''
     env.MSVSProject(target = "Mario" +  env['MSVSPROJECTSUFFIX'], srcs = cpps, incs = heads, buildtarget = prog, variant='Debug')
     print("Creating VS Project...")
 

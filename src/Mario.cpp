@@ -7,6 +7,7 @@
 #include "ECS.h"
 #include "Components.hpp"
 
+#include "Levels/Levels.h"
 
 #include "Scripts/Player.h"
 
@@ -73,14 +74,10 @@ int wmain(int argc, char* argv[])
 
     SDL_Event event;
     bool running = true;
-    Manager* manager = new Manager(server_manager);
-    
 
-    Entity* tilemap = manager->add_entity();
-    TilemapComponent* tilemap_comp = tilemap->add_component<TilemapComponent>();
+    LevelOne* manager = new LevelOne(server_manager);
 
-    tilemap_comp->add_tile(1, 1, 0);
-
+    manager->load();
 
     manager->begin();
 

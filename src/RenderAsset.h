@@ -29,11 +29,15 @@ class RenderAsset
 
 
 		RenderAsset(RenderServer* render_server, RenderType p_render_type, std::string path, float p_x, float p_y, float p_width, float p_height) {
+			
+			printf("Creating Render Asset!");
 			render_type = p_render_type;
 
 			spr_path = path;
 
 			r.x = p_x; r.y = p_y; r.w = p_width; r.h = p_height;
+
+			
 
 			switch (render_type)
 			{

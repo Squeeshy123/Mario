@@ -1,4 +1,5 @@
 #pragma once
+
 #include <vector>
 
 #include <SDL/SDL.h>
@@ -8,7 +9,7 @@
 #include <memory>
 #include "ServerManager.h"
 
-#define COMPONENT_INIT(ID, classname) public: classname() = default;	static const int id = ID;	static int get_id() { return Component::id;} 
+#define COMPONENT_INIT(ID, classname) public: static const int id = ID;	static int get_id() { return classname::id;} classname() = default;
 
 
 class Entity;
@@ -56,17 +57,21 @@ class Entity {
 		template< class ComponentType, typename... Args >
 		ComponentType* add_component(Args&&... params) {
 			if (ComponentType::get_id() > -1) {
+				printf("id: %i,  Size of args: %i\n",ComponentType::get_id(), sizeof...(Args));
 				if (sizeof...(Args) > 0) {
 					components.emplace_back(std::make_unique< ComponentType >(std::forward< Args >(params)...));
 					components[components.size() - 1]->set_owner(this);
 					return (ComponentType*)(components[components.size() - 1].get());
+					
 				}
 				else {
 					components.emplace_back(std::make_unique< ComponentType >());
 					components[components.size() - 1]->set_owner(this);
 					return (ComponentType*)(components[components.size() - 1].get());
 				}
+				
 			}
+			printf("my name markiplier");
 			return nullptr;
 		}
 
@@ -89,7 +94,7 @@ class Entity {
 };
 
 class Manager {
-	private:
+	protected:
 		std::vector<Entity*> entities;
 
 		Server::ServerManager* server_manager;
@@ -98,14 +103,14 @@ class Manager {
 
 		Manager(Server::ServerManager* p_server_manager);
 
-		void tick(float deltaTime) {
+		virtual void tick(float deltaTime) {
 			for (size_t i = 0; i < entities.size(); i++) entities[i]->tick(deltaTime);
 		}
-		void begin() {
+		virtual void begin() {
 			for (size_t i = 0; i < entities.size(); i++) entities[i]->begin();
 		}
 
-		void input(SDL_Event event) {
+		virtual void input(SDL_Event event) {
 			for (size_t i = 0; i < entities.size(); i++) entities[i]->input(event);
 		}
 

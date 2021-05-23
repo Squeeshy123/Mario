@@ -13,14 +13,11 @@ namespace MMath {
 		float w;
 	};
 
-	Vec2 operator*( Vec2 const& lhs, float const& rhs ){
+	inline Vec2 operator*( Vec2 const& lhs, float const& rhs ){
 		
 		return Vec2{lhs.x * rhs, lhs.y * rhs};
 	}
-	Vec2 operator*(float const& rhs, Vec2 const& lhs ){
-		
-		return Vec2{lhs.x * rhs, lhs.y * rhs};
-	}
+	
 
 
 /*
@@ -58,9 +55,9 @@ namespace MMath {
 	*/
 	template<typename T>
 	constexpr const T& clamp(const T& val, const T& lo, const T& hi){
-		if (val > hi) { return hi; }
+		if (val > hi)      { return hi; }
 		else if (val < lo) { return lo; }
-		else { return val; }
+		else               { return val;}
 	}
 	
 }

@@ -18,8 +18,10 @@ void RenderServer::update_textures() {
 
 RenderAsset* RenderServer::create_render_asset(RenderType p_render_type, std::string path, int p_x, int p_y, int p_width, int p_height)
 {
-	RenderAsset* ra = new RenderAsset(this, p_render_type, path, p_x, p_y, p_width, p_height);
+	RenderAsset* ra = new RenderAsset(this, p_render_type, path, p_x, p_y, p_width, p_height);	
 	render_buffer.push_back(ra);
+
+	update_textures();
 
 	return ra;
 }
@@ -48,22 +50,24 @@ SDL_Texture* RenderServer::load_texture(std::string path)
 }
 
 
-void RenderServer::render()
-{
+void RenderServer::render() {
+
 	SDL_SetRenderDrawColor(renderer, 0, 100, 255, 255);
 	SDL_RenderClear(renderer);
 
 	//printf("Start render");
 	for (size_t x = 0; x < render_buffer.size(); x++) {
+		
 		if (render_buffer[x]->render_type == RenderType::Texture) {
-			for (int y = 0; render_buffer[x]->instances.size()-1; y++) {
+
+			for (int y = 0; y < render_buffer[x]->instances.size(); y++) {
 				SDL_Rect r;
 				
 				r.x = (int)render_buffer[x]->get_rect().x + render_buffer[x]->instances[y].x;
 				r.y = (int)render_buffer[x]->get_rect().y + render_buffer[x]->instances[y].y;
 				r.w = (int)render_buffer[x]->get_rect().w;
 				r.h = (int)render_buffer[x]->get_rect().h;
-
+				
 				SDL_RenderCopy(renderer, texs[x], NULL, &r);
 			}
 		}
