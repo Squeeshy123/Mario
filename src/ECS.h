@@ -9,8 +9,9 @@
 #include <memory>
 #include "ServerManager.h"
 
-#define COMPONENT_INIT(ID, classname) public: static const int id = ID;	static int get_id() { return classname::id;} classname() = default;
+#define COMPONENT_INIT(ID, classname) public: static const int id = ID;	static int get_id() { return classname::id;} int iid = ID; int get_iid(){return iid;} classname() = default;
 
+#define COMPONENT_INIT_NC(ID, classname) public: static const int id = ID;	static int get_id() { return classname::id;} int iid = ID; int get_iid(){return iid;}
 
 class Entity;
 class Component;
@@ -33,13 +34,21 @@ class Component {
 		Entity* get_owner() { return owner; }
 		void set_owner(Entity* p_owner) { owner = p_owner;  }
 
+		inline bool operator==(Component& r){
+			if(this->get_iid() == r.get_iid())
+				return true;
+			return false;
+		}
+		
 };
+
+
 
 class Entity {
 	private:
 		Manager* manager = nullptr;
 
-		std::vector<std::unique_ptr<Component>> components;
+		std::vector<Component*> components;
 
 	public:
 		void tick(float deltaTime) { 
@@ -57,32 +66,36 @@ class Entity {
 		template< class ComponentType, typename... Args >
 		ComponentType* add_component(Args&&... params) {
 			if (ComponentType::get_id() > -1) {
-				printf("id: %i,  Size of args: %i\n",ComponentType::get_id(), sizeof...(Args));
+				printf("id: %i,  Size of args: %i\n", ComponentType::get_id(), sizeof...(Args));
 				if (sizeof...(Args) > 0) {
-					components.emplace_back(std::make_unique< ComponentType >(std::forward< Args >(params)...));
-					components[components.size() - 1]->set_owner(this);
-					return (ComponentType*)(components[components.size() - 1].get());
-					
+					ComponentType* c = new ComponentType(std::forward< Args >(params)...);
+					components.emplace_back(c);
+					c->set_owner(this);
+					return c;
 				}
 				else {
-					components.emplace_back(std::make_unique< ComponentType >());
-					components[components.size() - 1]->set_owner(this);
-					return (ComponentType*)(components[components.size() - 1].get());
+					ComponentType* c = new ComponentType();
+					components.emplace_back(c);
+					c->set_owner(this);
+					return c;
 				}
-				
 			}
-			printf("my name markiplier");
+			
 			return nullptr;
 		}
 
-		template<class ComponentType>
-		ComponentType* get_component() {
-			for (auto&& component : components) {
-				if (component->get_id() == ComponentType::get_id())
-					return static_cast<ComponentType*>(component.get());
+		template <typename CompType>
+		inline CompType* get_component()
+		{
+			for(Component* comp : components)
+			{
+				if (dynamic_cast<CompType*>(comp)!= nullptr)
+				{
+					return dynamic_cast<CompType*>(comp);
+				}
 			}
-			return (nullptr);
-		};
+			return nullptr;
+		}
 
 		template<class ComponentType>
 		bool has_component() {
@@ -91,6 +104,11 @@ class Entity {
 
 		Manager* get_manager() { return manager; }
 		void set_manager(Manager* p_manager) { manager = p_manager;  }
+
+		Entity();
+		~Entity(){
+			components.clear();
+		}
 };
 
 class Manager {
@@ -102,6 +120,9 @@ class Manager {
 	public:
 
 		Manager(Server::ServerManager* p_server_manager);
+		~Manager(){
+			entities.clear();
+		}
 
 		virtual void tick(float deltaTime) {
 			for (size_t i = 0; i < entities.size(); i++) entities[i]->tick(deltaTime);

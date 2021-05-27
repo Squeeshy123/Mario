@@ -9,6 +9,8 @@ class LevelOne : public Manager {
             : Manager(p_server_manager) {
         }
         
+
         void load();
         void begin();
+        void tick(float deltaTime);
 };

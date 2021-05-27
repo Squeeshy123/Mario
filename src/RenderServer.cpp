@@ -18,9 +18,11 @@ void RenderServer::update_textures() {
 
 RenderAsset* RenderServer::create_render_asset(RenderType p_render_type, std::string path, int p_x, int p_y, int p_width, int p_height)
 {
+	printf("updating textures\n");
 	RenderAsset* ra = new RenderAsset(this, p_render_type, path, p_x, p_y, p_width, p_height);	
+	
 	render_buffer.push_back(ra);
-
+	
 	update_textures();
 
 	return ra;
@@ -30,7 +32,7 @@ SDL_Texture* RenderServer::load_texture(std::string path)
 {
 	SDL_Surface* sdl_s = IMG_Load(path.c_str());
 
-	printf("Creating Texture");
+	printf("Creating Texture\n");
 	if (sdl_s == NULL) {
 		printf("Unable to create texture surface, SDL_Image Error: %s\n", IMG_GetError());
 	}

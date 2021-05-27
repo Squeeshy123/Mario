@@ -81,7 +81,6 @@ int wmain(int argc, char* argv[])
 
     manager->begin();
 
-
     double deltaTime = 0;
 
     Uint32 lastUpdate = SDL_GetTicks();
@@ -99,6 +98,7 @@ int wmain(int argc, char* argv[])
         
 
         server_manager->get_render_server()->render();
+    
 
         Uint32 current = SDL_GetTicks();
 
@@ -109,7 +109,6 @@ int wmain(int argc, char* argv[])
 
         
         manager->tick(deltaTime);
-
         
         std::string Title = base_title + std::to_string(deltaTime);
         SDL_SetWindowTitle(window, Title.c_str());

@@ -16,6 +16,10 @@ bool Entity::has_component() {
 }
 */
 
+Entity::Entity(){
+	
+}
+
 Manager::Manager(Server::ServerManager* p_server_manager)
 {
 	server_manager = p_server_manager;

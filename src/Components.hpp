@@ -106,12 +106,10 @@ class SpriteComponent
 		void begin() {
 			if (get_owner() != nullptr) {
 				path = "assets\\mario.png";
-				printf("1111111\n");
 				// Safety check for TransformComponent
 				if (t_comp == nullptr) t_comp = get_owner()->get_component<TransformComponent>();
-				printf("22222\n");
 				render_asset = owner->get_manager()->get_render_server()->create_render_asset(RenderType::Texture, path, t_comp->pos_x, t_comp->pos_y, t_comp->size_x * 64, t_comp->size_y * 64);
-				printf("33333333\n");
+				
 			}
 		}
 
@@ -134,9 +132,9 @@ class ScriptComponent : public Component {
 
 
 class TilemapComponent : public Component {
-	public: 
-		static const int id = 5; 
-		static int get_id() { return Component::id;}
+
+	COMPONENT_INIT(TILEMAP_COMPONENT_ID, TilemapComponent)
+
 	private:
 		std::vector<std::string> sprites;
 
@@ -148,8 +146,9 @@ class TilemapComponent : public Component {
 
 	public:
 		std::vector<std::tuple<int, int, int>> tiles;
-
-		TilemapComponent();
+		~TilemapComponent(){
+			render_assets.clear();
+		}
 
 		void create_render_assets(){
 			render_assets.clear();
