@@ -7,9 +7,9 @@ if 'vsproj' in ARGUMENTS:
 
 env = Environment()
 
-env.Append(CPPPATH=['C:\\Users\\finnm\\Desktop\\CSCWork\\Libraries\\SDL\\include', '.\\src\\'])
-env.Append(LIBPATH=['C:\\Users\\finnm\\Desktop\\CSCWork\\Libraries\\SDL\\lib'])
-env.Append(LIBS=['SDL2', 'SDL2main', 'SDL2_image'])
+env.Append(CPPPATH=['A:\\Desktop\\Programming\\Tutorial\\CPP\\Libraries\\include', '.\\src\\'])
+env.Append(LIBPATH=['A:\\Desktop\\Programming\\Tutorial\\CPP\\Libraries\\lib\\SDL'])
+env.Append(LIBS=['SDL2', 'SDL2main'])
 
 env.Append(CXXVERSION='99')
 
