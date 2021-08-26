@@ -3,7 +3,6 @@
 #include <SDL/SDL.h>
 
 
-
 const std::string base_title = "Mario | ";
 
 int checkpoint = 0;
@@ -36,6 +35,7 @@ char const* convert_button_number_to_string(int button)
     return result;
 }
 
+// use wmain() because SCons doesn't like regular main()
 int wmain(int argc, char* argv[])
 {
     
@@ -64,10 +64,19 @@ int wmain(int argc, char* argv[])
         return 1;
     }
 
+    SDL_Event evnt;
     bool running = true;
     while (running) {
-
+        while (SDL_PollEvent(&evnt) > 0)
+        {
+            if (evnt.type == SDL_QUIT) {
+                running = false;
+            }
+        }
     }
+
+    delete window;
+    delete renderer;
 
     return 0;
 }
