@@ -2,6 +2,8 @@
 #include <string>
 #include <SDL/SDL.h>
 
+#include "Player.h"
+#include "Game.h"
 
 const std::string base_title = "Mario | ";
 
@@ -10,7 +12,6 @@ void debugcheck(std::string s) {
     std::cout << s << " Debug: " << checkpoint << "\n";
     checkpoint++;
 }
-
 char const* convert_button_number_to_string(int button)
 {
     char const* result = "NO_BUTTON";
@@ -58,21 +59,56 @@ int wmain(int argc, char* argv[])
         SDL_RENDERER_ACCELERATED
     );
 
+    Game* game = Game::get_singleton();
+
+    game->set_renderer(*renderer);
+    game->set_window(*window);
+
+
     if (window == NULL) {
-        // In the case that the window could not be made...
         printf("Could not create window: %s\n", SDL_GetError());
         return 1;
     }
 
+    Player* player = new Player();
+
     SDL_Event evnt;
     bool running = true;
+    SDL_Rect r;
+    r.x = 100;
+    r.y = 100;
+    r.w = 100;
+    r.h = 100;
+
+    Uint64 NOW = SDL_GetPerformanceCounter();
+    Uint64 LAST = 0;
+    double delta_time = 0;
+
+
     while (running) {
-        while (SDL_PollEvent(&evnt) > 0)
+
+        LAST = NOW;
+        NOW = SDL_GetPerformanceCounter();
+
+        delta_time = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency());
+
+        if (SDL_PollEvent(&evnt) > 0)
         {
             if (evnt.type == SDL_QUIT) {
                 running = false;
             }
+            
+            player_input(*player, evnt);
         }
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        SDL_RenderClear(renderer);
+        
+        player_physics(*player, delta_time);
+        
+        draw_player(*player);
+
+        SDL_RenderDrawRect(renderer, &r);
+        SDL_RenderPresent(renderer);
     }
 
     delete window;
