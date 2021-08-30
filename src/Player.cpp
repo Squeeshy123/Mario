@@ -3,41 +3,40 @@
 
 #include "Player.h"
 #include "Renderer.h"
+#include "World.h"
 
-
-void draw_player(Player& player)
+void Player::draw_player()
 {
 	Renderer::set_draw_color(Color{255,0,0,0});
-	Renderer::render_rect(player.position, Vec2(50, 50));
+	Renderer::render_rect(position, Vec2(50, 50));
 }
 
-void player_input(Player& player, SDL_Event& evnt)
+void Player::player_input(SDL_Event& evnt)
 {
 	if (evnt.type == SDL_KEYDOWN) {
 		switch (evnt.key.keysym.sym) {
 			case SDLK_d:
-				player.velocity.x = player.speed;
+				velocity.x = speed;
 				printf("D");
 				break;
 			case SDLK_a:
-				player.velocity.x = -player.speed;
+				velocity.x = -speed;
 				printf("A");
 				break;
 		}
 	}
 }
 
-void player_update(Player& player)
+void Player::player_update()
 {
 }
 
-void player_physics(Player& player, float dT)
+void Player::player_physics(float dT, World& world)
 {
-	player.velocity.y += 9.8f;
-	player.position = player.position + player.velocity * dT;
-	player.velocity.x = 0;
-}
-
-void player_collision(Player& player)
-{
+	for (int i = 0; i < world.collision_rects.size(); i++) {
+	
+	}
+	velocity.y += 9.8f;
+	position = position + velocity * dT;
+	velocity.x = 0;
 }
