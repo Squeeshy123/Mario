@@ -1,5 +1,9 @@
 #pragma once
 #include <stdint.h>
+
+// Get upper right point
+
+
 struct Color
 {
 	uint8_t r;
@@ -47,6 +51,21 @@ struct Rect {
 		this->size.x = w;
 		this->size.y = h;
 	}
+	static inline Vec2 get_UR(Rect r) {
+		return Vec2{ r.location.x + r.size.x, r.location.y + r.size.y };
+	}
+	// Get opper left point
+	static inline Vec2 get_UL(Rect r) {
+		return Vec2{ r.location.x - r.size.x, r.location.y + r.size.y };
+	}
+	// Get lower right point
+	static inline Vec2 get_BR(Rect r) {
+		return Vec2{ r.location.x + r.size.x, r.location.y - r.size.y };
+	}
+	// Get lower left point
+	static inline Vec2 get_BL(Rect r) {
+		return Vec2{ r.location.x - r.size.x, r.location.y - r.size.y };
+	}
 	Line* as_lines() {
 		Line lines[4] = { 
 		Line( get_UR(*this), get_UL(*this) ),
@@ -74,9 +93,8 @@ inline Vec2 operator*( Vec2 const& lhs, float const& rhs ){
 }
 
 
-static HitResult line_intersects(Line& l1, Line& l2)
+static HitResult line_intersects_line(Line& l1, Line& l2)
 {
-	
 	float denominator = ((l1.p2.x - l1.p1.x) * (l2.p2.y - l2.p1.y)) - ((l1.p2.y - l1.p1.y) * (l2.p2.x - l2.p1.x));
 	float numerator1 = ((l1.p1.y - l2.p1.y) * (l2.p2.x - l2.p1.x)) - ((l1.p1.x - l2.p1.x) * (l2.p2.y - l2.p1.y));
 	float numerator2 = ((l1.p1.y - l2.p1.y) * (l1.p2.x - l1.p1.x)) - ((l1.p1.x - l2.p1.x) * (l1.p2.y - l1.p1.y));
@@ -91,51 +109,33 @@ static HitResult line_intersects(Line& l1, Line& l2)
 	return hr;
 }
 
-// Get upper right point
-static inline Vec2 get_UR(Rect r) {
-	return Vec2{r.location.x + r.size.x, r.location.y + r.size.y};
-}
-// Get opper left point
-static inline Vec2 get_UL(Rect r) {
-	return Vec2{ r.location.x - r.size.x, r.location.y + r.size.y };
-}
-// Get lower right point
-static inline Vec2 get_BR(Rect r) {
-	return Vec2{ r.location.x + r.size.x, r.location.y - r.size.y };
-}
-// Get lower left point
-static inline Vec2 get_BL(Rect r) {
-	return Vec2{ r.location.x - r.size.x, r.location.y - r.size.y };
-}
+
 
 static inline bool rect_intersects_rect(Rect r1, Rect r2){
-	Line r1_upper = Line(get_UR(r1), get_UL(r1));
-	Line r1_lower = Line(get_BR(r1), get_BL(r1));
-	Line r1_right = Line(get_UR(r1), get_BL(r1));
-	Line r1_left =	Line(get_UL(r1), get_BL(r1));
 
-	Line r2_upper = Line(get_UR(r2), get_UL(r2));
-	Line r2_lower = Line(get_BR(r2), get_BL(r2));
-	Line r2_left = Line(get_BR(r2), get_BL(r2));
-	Line r2_right = Line(get_BR(r2), get_BL(r2));
-
-	Line r1_lines[4] = r1.as_lines();
+	Line* r1_lines = r1.as_lines();
+	Line* r2_lines = r2.as_lines();
 
 	// Find whether points overlap here
-	for()
+	for (int x = 0; x < 4; x++) {
+		for (int y = 0; y < 4; y++) {
+			if (line_intersects_line(r1_lines[x], r2_lines[y]).valid_hit) {
+				return true;
+			}
+		}
+	}
 	return false;
-	
 }
-static inline bool rect_intersects_line(Rect r1, Line r2) {
-	Line r1_upper = Line(get_UR(r1), get_UL(r1));
-	Line r1_lower = Line(get_BR(r1), get_BL(r1));
-	Line r1_right = Line(get_UR(r1), get_BL(r1));
-	Line r1_left = Line(get_UL(r1), get_BL(r1));
+static inline bool rect_intersects_line(Rect r1, Line l1) {
+	Line* r1_lines = r1.as_lines();
+
 
 
 	// Find whether points overlap here
-	line_intersects()
-	return HitResult();
+	for (int i = 0; i < 4; i++)
+		if (line_intersects_line(l1, r1_lines[i]).valid_hit)
+			return true;
+	return false;
 
 }
 

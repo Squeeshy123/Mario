@@ -14,4 +14,5 @@ class World
 
 		void begin();
 		void tick(float dT);
+		void add_collision_rect(Rect r);
 };

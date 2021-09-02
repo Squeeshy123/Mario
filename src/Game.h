@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL/SDL.h>
-
+#include "Player.h"
+class World;
 class Game
 {
     private:
@@ -21,6 +22,8 @@ class Game
     private:
         SDL_Renderer* renderer;
         SDL_Window* window;
+        Player* player;
+        World* world;
     public:
         SDL_Renderer* get_renderer() {
             return renderer;
@@ -35,7 +38,12 @@ class Game
             window = &new_window;
         }
 
-
+        void set_player(Player* new_player) {
+            player = new_player;
+        }
+        void set_world(World* new_world) {
+            world = new_world;
+        }
 
     
 };

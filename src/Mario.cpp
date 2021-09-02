@@ -4,6 +4,7 @@
 
 #include "Player.h"
 #include "Game.h"
+#include "World.h"
 
 const std::string base_title = "Mario | ";
 
@@ -58,19 +59,23 @@ int wmain(int argc, char* argv[])
         0,
         SDL_RENDERER_ACCELERATED
     );
-
-    Game* game = Game::get_singleton();
-
-    game->set_renderer(*renderer);
-    game->set_window(*window);
-
-
     if (window == NULL) {
         printf("Could not create window: %s\n", SDL_GetError());
         return 1;
     }
 
+
+    Game* game = Game::get_singleton();
     Player* player = new Player();
+    World* world = new World();
+
+    game->set_renderer(*renderer);
+    game->set_window(*window);
+    game->set_player(player);
+    game->set_world(world);
+
+
+    
 
     SDL_Event evnt;
     bool running = true;
@@ -98,19 +103,21 @@ int wmain(int argc, char* argv[])
                 running = false;
             }
             
-            player_input(*player, evnt);
+            player->player_input(evnt);
         }
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_RenderClear(renderer);
         
-        player_physics(*player, delta_time);
+        player->player_physics(delta_time, *world);
         
-        draw_player(*player);
+        player->draw_player();
 
         SDL_RenderDrawRect(renderer, &r);
         SDL_RenderPresent(renderer);
     }
 
+    delete game;
+    delete player;
     delete window;
     delete renderer;
 

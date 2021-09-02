@@ -9,6 +9,7 @@ class Player {
 		Vec2 position;
 		Vec2 velocity;
 		float speed = 10.0f;
+		
 
 	public:
 		void draw_player();
